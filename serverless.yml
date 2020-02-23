@@ -1,0 +1,23 @@
+service: verifier-serverless
+app: verifier-app
+org: spott
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: prod
+  region: us-east-1
+  profile: spott
+  apiName: verifier-api
+
+functions:
+  server:
+    handler: lib/server/lambda-handler.server
+    events:
+      - http:
+          path: rfc/verify
+          method: post
+          cors: true
+          private: true
+    environment:
+      NODE_ENV: production
