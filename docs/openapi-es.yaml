@@ -1,0 +1,118 @@
+openapi: 3.0.0
+
+info:
+  title: Verifier API
+  version: 1.0.0
+  description: Documentación de la API de Verifier.
+  contact:
+    name: Verifier, Inc.
+    url: https://verifier.mx
+    email: info@verifier.mx
+
+servers:
+  - url: https://api.verifier.mx
+    description: Servidor de la API de Producción.
+
+paths:
+  /rfc/verify:
+    post:
+      operationId: verifyRfc
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Rfc
+      summary: Verifica la validez y registro de un RFC.
+      description: >
+        Verifica que un RFC tenga un formato válido y que esté registrado ante el SAT.
+      requestBody:
+        $ref: '#/components/requestBodies/SingleRfc'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleRfc'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  requestBodies:
+    SingleRfc:
+      description: Los datos requeridos para validar un RFC.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              rfc:
+                description: El RFC a validar en texto plano.
+                type: string
+            required:
+              - rfc
+  schemas:
+    SingleRfc:
+      type: object
+      properties:
+        isValid:
+          $ref: '#/components/schemas/IsValid'
+        isRegistered:
+          $ref: '#/components/schemas/IsRegistered'
+        rfc:
+          $ref: '#/components/schemas/Rfc'
+        type:
+          $ref: '#/components/schemas/Type'
+        validationErrors:
+          $ref: '#/components/schemas/ValidationErrors'
+    IsValid:
+      description: Indica si el string ingresado es un RFC válido.
+      type: boolean
+    IsRegistered:
+      description: Indica si el RFC está dado de alta ante el SAT (Servicio de Administración Tributaria).
+      type: boolean
+    Rfc:
+      description: El RFC formateado (en mayúsculas, sin espacios ni simbolos). Regresa `null` en caso de que el RFC sea inválido.
+      type: string
+    Type:
+      description: El tipo del RFC ingresado. Los valores pueden ser `person` para personas físicas o `company` para personas morales. Regresa `null` en caso de que el RFC sea inválido.
+      type: string
+      enum:
+        - person
+        - company
+    ValidationErrors:
+      description: En caso de que el RFC no sea válido, aquí se listan los motivos por los que no fue válido.
+      type: array
+      items:
+        $ref: '#/components/schemas/ValidationError'
+    ValidationError:
+      description: >
+        `INVALID_FORMAT`: El formato es inválido, es decir, no cuenta con la longitud o estructura de caracteres esperado.
+        `INVALID_DATE`: El string tiene el formato adecuado, pero los dígitos para la fecha generan una fecha inválida. 
+        `INVALID_VERIFICATION_DIGIT`: El string tiene el formato adecuado, pero el último caracter (dígito verificador) es inválido.
+      type: string
+      enum:
+        - INVALID_FORMAT
+        - INVALID_DATE
+        - INVALID_VERIFICATION_DIGIT
+    Error:
+      type: object
+      properties:
+        code:
+          description: Identificador del error.
+          type: string
+        message:
+          description: Un mensaje para proveer más información sobre el error.
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
