@@ -63,6 +63,8 @@ components:
           $ref: '#/components/schemas/Rfc'
         type:
           $ref: '#/components/schemas/Type'
+        blacklist69b:
+          $ref: '#/components/schemas/Blacklist69b'
         validationErrors:
           $ref: '#/components/schemas/ValidationErrors'
     IsValid:
@@ -80,6 +82,55 @@ components:
       enum:
         - person
         - company
+    Blacklist69b:
+      description: Provee detalles en caso de que el RFC esté incluído en la lista negra de contribuyentes con operaciones presuntamente inexistentes ([69-B](https://www.sat.gob.mx/consultas/76674/consulta-la-relacion-de-contribuyentes-con-operaciones-presuntamente-inexistentes)). Se regresará `null` si el RFC no está incluído en la lista negra.
+      type: object
+      properties:
+        id:
+          description: El número o identificador asignado por el SAT para el RFC dentro de la lista.
+          type: string
+        status:
+          description: El estatus en que se encuentra el RFC dentro de la lista. Los valores correspondientes con el SAT son `alleged` (Presunto), `detracted` (Desvirtuado), `definitive` (Definitivo) y `favorable` (Sentencia Favorable).
+          type: string
+          enum:
+            - alleged
+            - detracted
+            - definitive
+            - favorable
+        name:
+          description: El nombre o razón social de la persona física o moral.
+          type: string
+        allegedDetails:
+          description: Información adicional en caso de que el RFC esté o haya pasado por el estatus "alleged".
+          $ref: '#/components/schemas/Blacklist69bStatus'
+        detractedDetails:
+          description: Información adicional en caso de que el RFC esté o haya pasado por el estatus "detracted".
+          $ref: '#/components/schemas/Blacklist69bStatus'
+        definitiveDetails:
+          description: Información adicional en caso de que el RFC esté o haya pasado por el estatus "definitive".
+          $ref: '#/components/schemas/Blacklist69bStatus'
+        favorableDetails:
+          description: Información adicional en caso de que el RFC esté o haya pasado por el estatus "favorable".
+          $ref: '#/components/schemas/Blacklist69bStatus'
+    Blacklist69bStatus:
+      description: Brinda información adicional sobre uno de los estatus en que está o estuvo el RFC en la lista. En caso de que el RFC no esté o no haya pasado por dicho estatus se regresará `null`.
+      type: object
+      properties:
+        ogId:
+          description: Número de oficio global en que se publicó.
+          type: string
+        ogPublicactionDate:
+          description: Fecha en que el estatus del RFC se publicó en el oficio global.
+          type: string
+          format: date-time
+        satPublicactionDate:
+          description: Fecha en que el estatus del RFC se publicó en el SAT.
+          type: string
+          format: date-time
+        dofPublicactionDate:
+          description: Fecha en que el estatus del RFC se publicó en el Diario Oficial de la Federación.
+          type: string
+          format: date-time
     ValidationErrors:
       description: En caso de que el RFC no sea válido, aquí se listan los motivos por los que no fue válido.
       type: array

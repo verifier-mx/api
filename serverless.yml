@@ -9,15 +9,19 @@ provider:
   region: us-east-1
   profile: spott
   apiName: verifier-api
+  apiKeys:
+    - x9gflvez3g
+  apiGateway:
+    apiKeySourceType: HEADER
 
 functions:
   server:
     handler: lib/server/lambda-handler.server
+    environment:
+      NODE_ENV: production
     events:
       - http:
           path: rfc/verify
           method: post
           cors: true
           private: true
-    environment:
-      NODE_ENV: production
