@@ -35,6 +35,27 @@ paths:
                 $ref: '#/components/schemas/SingleRfc'
         '401':
           $ref: '#/components/responses/Unauthorized'
+  /rfc/generate:
+    post:
+      operationId: generateRfc
+      security:
+        - ApiKeyAuth: []
+      tags:
+        - Rfc
+      summary: Genera un RFC y verifica su registro en el SAT.
+      description: >
+        Genera un RFC a partir de los datos de una persona física o moral y verifica si el RFC generado está registrado ante el SAT.
+      requestBody:
+        $ref: '#/components/requestBodies/SingleRfc'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleRfc'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
 components:
   requestBodies:
@@ -51,6 +72,44 @@ components:
                 type: string
             required:
               - rfc
+    GenerateRfc:
+      description: Los datos requeridos para generar un RFC.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                description: El tipo del RFC ingresado. El valor puede ser `person` para persona física o `company` para persona moral.
+                type: string
+                enum:
+                  - person
+                  - company
+              name:
+                description: El nombre o nombres de la persona física; o la razón social de la persona moral.
+                type: string
+              lastName1:
+                description: Apellido paterno. Requerido sólo para personas físicas.
+                type: string
+              lastName2:
+                description: Apellido materno. Si la persona tiene más de 2 apellidos se deben incluir en este campo. Requerido sólo para personas físicas.
+                type: string
+              day:
+                description: El día de nacimiento para una persona física; o el día de creación de la empresa para una persona moral.
+                type: integer
+                minimum: 1
+                maximum: 31
+              month:
+                description: El mes de nacimiento para una persona física; o el mes de creación de la empresa para una persona moral.
+                type: integer
+                minimum: 1
+                maximum: 12
+              year:
+                description: El año de nacimiento para una persona física; o el año de creación de la empresa para una persona moral.
+                type: integer
+            required:
+              - type
   schemas:
     SingleRfc:
       type: object

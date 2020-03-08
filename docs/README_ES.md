@@ -56,7 +56,7 @@ Los posibles valores que puede contener `validation Errors` y su descripción so
 ```js
 POST /rfc/verify
  
-body:
+Body:
 {
   "rfc": "bmc111105rp5"
 }
@@ -88,6 +88,69 @@ Respuesta:
   }
 }
 
+```
+
+### POST /rfc/generate
+
+Este endpoint genera un RFC a partir de los datos de una persona física o moral y verifica si el RFC generado está registrado ante el [SAT](https://www.sat.gob.mx/home).
+
+**Parámetros**
+
+Los siguientes parámetros se deberán enviar en el _body_ del request:
+
+| Parámetro | Tipo | Descripción para personas **físicas** | Descripción para personas **morales** |
+| --------- | ---- | ----------- |
+|`type`| String | El tipo del RFC ingresado. El valor debe ser `person` para una persona física. | El tipo del RFC ingresado. El valor debe ser `company` para una persona moral. |
+|`name`| String | Nombre o nombre(s). | Razón social. |
+|`lastName1`| String | Apellido paterno. | No enviar este parámetro. |
+|`lastName2`| String | Apellido materno. Si la persona tiene más de 2 apellidos se deben incluir en este campo. | No enviar este parámetro. |
+|`day`| Integer | Día de nacimiento. | Día de creación de la empresa. |
+|`month`| Integer | Mes de nacimiento. | Mes de creación de la empresa. |
+|`year`| Integer | Año de nacimiento. | Año de creación de la empresa. |
+
+**Respuesta**
+
+El endpoint regresará un objeto con los siguientes parámetros:
+
+| Parámetro | Tipo | Descripción |
+| --------- | ---- | ----------- |
+|`isValid`|Boolean|Indica es el string ingresado es un RFC válido.|
+|`isRegistered`|Boolean|Indica si el RFC está dado de alta en el SAT.|
+|`rfc`|String|El RFC formateado (en mayúsculas, sin espacios ni símbolos). Regresa `null` en caso de que el RFC sea inválido.|
+|`type`|String|El tipo del RFC ingresado. Los valores pueden ser `person` para personas físicas, `company` para personas morales, `generic` para el RFC genérico "XAXX010101000" o `foreign` para el RFC "XEXX010101000" para residentes en el extranjero. Regresa `null` en caso de que el RFC sea inválido.|
+|`blacklist69b`|Objeto|Provee detalles en caso de que el RFC esté incluído en la lista negra de contribuyentes con operaciones presuntamente inexistentes ([69-B](https://www.sat.gob.mx/consultas/76674/consulta-la-relacion-de-contribuyentes-con-operaciones-presuntamente-inexistentes)). Se regresará `null` si el RFC no está incluído en la lista negra. Ver la sección **"Lista negra 69-B"** para conocer más detalles sobre este objeto.|
+|`validation Errors`|Array[String]|En caso de que el RFC no sea válido, aquí se indican los motivos por los que no fue válido.|
+
+Los posibles valores que puede contener `validation Errors` y su descripción son:
+
+| Error | Descripción |
+| ----- | ----------- |
+|`INVALID_FORMAT`|El formato es inválido, es decir, no cuenta con la longitud o estructura de caracteres esperado. Ej: `XYZ` porque claramente no es un RFC. |
+|`INVALID_DATE`|El string tiene el formato adecuado, pero los dígitos para la fecha generan una fecha inválida. Ej: `MHTR815511A70` porque refiere al mes `55`.|
+|`INVALID_VERIFICATION_DIGIT`|El string tiene el formato adecuado, pero el último caracter (dígito verificador) es inválido. Ej: `MHTR810511A79` termina en `9` pero se espera que termine en `2`.|
+
+**Ejemplo**
+
+```js
+POST /rfc/generate
+ 
+Body:
+{
+  "type": "company",
+  "name": "Bimbo S.A. de C.V.",
+  "day": 8,
+  "month": 11,
+  "year": 2001
+}
+
+Respuesta:
+{
+  "isValid": true,
+  "isRegistered": true,
+  "rfc": "BIM011108BF8",
+  "type": "company",
+  "blacklist69b": null
+}
 ```
 
 ### Lista negra 69-B

@@ -9,10 +9,6 @@ provider:
   region: us-east-1
   profile: spott
   apiName: verifier-api
-  apiKeys:
-    - x9gflvez3g
-  apiGateway:
-    apiKeySourceType: HEADER
 
 functions:
   server:
