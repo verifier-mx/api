@@ -40,6 +40,7 @@ El endpoint regresará un objeto con los siguientes parámetros:
 |`isRegistered`|Boolean|Indica si el RFC está dado de alta en el SAT.|
 |`rfc`|String|El RFC formateado (en mayúsculas, sin espacios ni símbolos). Regresa `null` en caso de que el RFC sea inválido.|
 |`type`|String|El tipo del RFC ingresado. Los valores pueden ser `person` para personas físicas, `company` para personas morales, `generic` para el RFC genérico "XAXX010101000" o `foreign` para el RFC "XEXX010101000" para residentes en el extranjero. Regresa `null` en caso de que el RFC sea inválido.|
+|`blacklist69`|Objeto|Provee detalles en caso de que el RFC esté incluído en la lista negra de contribuyentes incumplidos y condonados ([69](https://www.sat.gob.mx/consultas/11981/consulta-la-relacion-de-contribuyentes-incumplidos)). Se regresará `null` si el RFC no está incluído en ninguna lista. Ver la sección **"Lista negra 69"** para conocer más detalles sobre este objeto.|
 |`blacklist69b`|Objeto|Provee detalles en caso de que el RFC esté incluído en la lista negra de contribuyentes con operaciones presuntamente inexistentes ([69-B](https://www.sat.gob.mx/consultas/76674/consulta-la-relacion-de-contribuyentes-con-operaciones-presuntamente-inexistentes)). Se regresará `null` si el RFC no está incluído en la lista negra. Ver la sección **"Lista negra 69-B"** para conocer más detalles sobre este objeto.|
 |`validation Errors`|Array[String]|En caso de que el RFC no sea válido, aquí se indican los motivos por los que no fue válido.|
 
@@ -58,31 +59,51 @@ POST /rfc/verify
  
 Body:
 {
-  "rfc": "bmc111105rp5"
+  "rfc": "ais9610302u1"
 }
 
 Respuesta:
 {
   "isValid": true,
   "isRegistered": true,
-  "rfc": "BMC111105RP5",
+  "rfc": "AIS9610302U1",
   "type": "company",
+  "blacklist69": {
+    "name": "AISLANTECH, S.A. DE C.V.",
+    "state": "GUERRERO",
+    "lists": [
+      {
+        "type": "CONDONADOS_ART_74",
+        "firstPublicationDate": "2014-10-01T05:00:00.000Z",
+        "publicationDate": null,
+        "amount": null,
+        "reason": null
+      },
+      {
+        "type": "CONDONADOS_2007_2015",
+        "firstPublicationDate": "2014-01-01T06:00:00.000Z",
+        "publicationDate": null,
+        "amount": 283027,
+        "reason": "Por cumplir con los requisitos previstos en el artículo 74 del Código Fiscal de la Federación y las reglas de la Resolución Miscelánea Fiscal"
+      }
+    ]
+  },
   "blacklist69b": {
-    "id": "1186",
-    "name": "NEGMEX NEGOCIOS EMPRESARIALES DE MÉXICO, S.A. DE C.V.",
+    "id": "546",
+    "name": "AISLANTECH, S.A. DE C.V.",
     "status": "definitive",
     "allegedDetails": {
-      "ogId": "500-05-2017-32098",
-      "ogPublicationDate": "2017-08-29T05:00:00.000Z",
-      "satPublicationDate": "2017-09-01T05:00:00.000Z",
-      "dofPublicationDate": "2017-09-19T05:00:00.000Z"
+      "ogId": "500-05-2017-16054",
+      "ogPublicationDate": "2017-04-28T05:00:00.000Z",
+      "satPublicationDate": "2017-05-01T05:00:00.000Z",
+      "dofPublicationDate": "2017-05-29T05:00:00.000Z"
     },
     "detractedDetails": null,
     "definitiveDetails": {
-      "ogId": "500-05-2018-8181",
-      "ogPublicationDate": "2018-03-23T06:00:00.000Z",
-      "satPublicationDate": "2018-03-23T06:00:00.000Z",
-      "dofPublicationDate": "2018-04-17T05:00:00.000Z"
+      "ogId": "500-05-2018-13465",
+      "ogPublicationDate": "2018-05-16T05:00:00.000Z",
+      "satPublicationDate": "2018-05-16T05:00:00.000Z",
+      "dofPublicationDate": "2018-05-31T05:00:00.000Z"
     },
     "favorableDetails": null
   }
@@ -118,6 +139,7 @@ El endpoint regresará un objeto con los siguientes parámetros:
 |`isRegistered`|Boolean|Indica si el RFC está dado de alta en el SAT.|
 |`rfc`|String|El RFC formateado (en mayúsculas, sin espacios ni símbolos). Regresa `null` en caso de que el RFC sea inválido.|
 |`type`|String|El tipo del RFC ingresado. Los valores pueden ser `person` para personas físicas, `company` para personas morales, `generic` para el RFC genérico "XAXX010101000" o `foreign` para el RFC "XEXX010101000" para residentes en el extranjero. Regresa `null` en caso de que el RFC sea inválido.|
+|`blacklist69`|Objeto|Provee detalles en caso de que el RFC esté incluído en la lista negra de contribuyentes incumplidos y condonados ([69](https://www.sat.gob.mx/consultas/11981/consulta-la-relacion-de-contribuyentes-incumplidos)). Se regresará `null` si el RFC no está incluído en ninguna lista. Ver la sección **"Lista negra 69"** para conocer más detalles sobre este objeto.|
 |`blacklist69b`|Objeto|Provee detalles en caso de que el RFC esté incluído en la lista negra de contribuyentes con operaciones presuntamente inexistentes ([69-B](https://www.sat.gob.mx/consultas/76674/consulta-la-relacion-de-contribuyentes-con-operaciones-presuntamente-inexistentes)). Se regresará `null` si el RFC no está incluído en la lista negra. Ver la sección **"Lista negra 69-B"** para conocer más detalles sobre este objeto.|
 |`validation Errors`|Array[String]|En caso de que el RFC no sea válido, aquí se indican los motivos por los que no fue válido.|
 
@@ -149,9 +171,51 @@ Respuesta:
   "isRegistered": true,
   "rfc": "BIM011108BF8",
   "type": "company",
+  "blacklist69": null,
   "blacklist69b": null
 }
 ```
+
+### Lista negra 69
+
+En caso de que el RFC esté incluído en la lista negra de contribuyentes incumplidos y condonados ([69](https://www.sat.gob.mx/consultas/11981/consulta-la-relacion-de-contribuyentes-incumplidos)) se regresará un objeto `blacklist69` con las siguientes propiedades:
+
+| Parámetro | Tipo | Descripción |
+| --------- | ---- | ----------- |
+|`name`|String|El nombre o razón social de la persona física o moral.|
+|`state`|String|El estado de México en que fue registrada la razón social.|
+|`lists`|[Objeto]|El detalle de todas las listas de contribuyentes incumplidos y condonados en que está incluído el RFC.|
+
+Cada objeto incluído en `lists` tendrá las siguientes propiedades:
+
+| Parámetro | Tipo | Descripción |
+| --------- | ---- | ----------- |
+|`type`|String|El tipo o nombre de la lista en que está incluído el RFC. Más delante se listan todos los posibles valores.|
+|`firstPublicationDate`|String|La primera fecha en que se publicó este RFC en la lista.|
+|`publicationDate`|String|La fecha en que se publicó este RFC en la lista ya con el monto actualizado (campo `amount`).|
+|`amount`|Float|La cantidad de dinero en pesos mexicanos ($MXN) involucrada según la operación listada (condonación, adeudo, retorno de inversión, etc).|
+|`reason`|String|Explicación provista por el SAT de por qué el RFC se encuentra en la lista.|
+
+Los diferentes tipos (`type`) que puede tener la lista 69 son:
+
+* `CANCELADOS`: Cancelados.
+* `CONDONADOS_ART_74`: Condonados de multas (Artículo 74 del Código Fiscal de la Federación).
+* `CONDONADOS_ART_146B`: Condonados de concurso mercantil (Artículo 146B del Código Fiscal de la Federación).
+* `CONDONADOS_ART_21`: Condonados de recargos (Artículo 21 del Código Fiscal de la Federación).
+* `CONDONADOS_DECRETO_2015`: Condonados por Decreto (Del 22 de enero y 26 de marzo de 2015).
+* `CONDONADOS_2007_2015`: Condonados del 01 de enero de 2007 al 04 de mayo de 2015.
+* `CANCELADOS_2007_2015`: Cancelados del 01 de enero de 2007 al 04 de mayo de 2015.
+* `RETORNO_INVERSIONES`: Retorno de inversiones.
+* `EXIGIBLES`: Exigibles.
+* `FIRMES`: Firmes.
+* `NO_LOCALIZADOS`: No localizados.
+* `SENTENCIAS`: Sentencias.
+* `ELIMINADOS_NO_LOCALIZADOS`: Eliminados de la relación de no localizados.
+
+El documento técnico provisto por el SAT con información de cada tipo se puede [descargar aquí](http://omawww.sat.gob.mx/cifras_sat/Documents/causasymotivos.xls).
+
+*Nuestra base de datos se actualiza cada 24 horas con la información más reciente disponible en el SAT.
+
 
 ### Lista negra 69-B
 

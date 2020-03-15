@@ -15,6 +15,38 @@ const [rfc] = testUtils.generateFixtures({
   ]
 });
 
+const blacklists69 = testUtils.generateFixtures({
+  type: 'blacklist69',
+  recipe: [
+    {
+      rfc: VALID_RFC,
+      type: 'CANCELADOS',
+      name: 'COMPANY NAME SA DE CV',
+      firstPublicationDate: new Date(100),
+      publicationDate: new Date(200),
+      amount: 1000,
+      state: 'JALISCO',
+      reason: 'REASON 1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: undefined
+    },
+    {
+      rfc: VALID_RFC,
+      type: 'NO_LOCALIZADOS',
+      name: 'COMPANY NAME, S.A. DE C.V.',
+      firstPublicationDate: new Date(500),
+      publicationDate: undefined,
+      amount: 5012,
+      state: 'JALISCO',
+      reason: 'REASON 2',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: undefined
+    }
+  ]
+});
+
 const [blacklist69b] = testUtils.generateFixtures({
   type: 'blacklist69b',
   recipe: [
@@ -48,5 +80,6 @@ const [blacklist69b] = testUtils.generateFixtures({
 
 module.exports = {
   rfc,
+  blacklists69,
   blacklist69b
 };

@@ -21,3 +21,8 @@ functions:
           method: post
           cors: true
           private: true
+      - http:
+          path: rfc/generate
+          method: post
+          cors: true
+          private: true

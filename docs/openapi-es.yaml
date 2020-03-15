@@ -122,6 +122,8 @@ components:
           $ref: '#/components/schemas/Rfc'
         type:
           $ref: '#/components/schemas/Type'
+        blacklist69:
+          $ref: '#/components/schemas/Blacklist69'
         blacklist69b:
           $ref: '#/components/schemas/Blacklist69b'
         validationErrors:
@@ -141,6 +143,57 @@ components:
       enum:
         - person
         - company
+    Blacklist69:
+      description: Provee detalles en caso de que el RFC esté incluído en la lista negra de contribuyentes incumplidos y condonados ([69](https://www.sat.gob.mx/consultas/11981/consulta-la-relacion-de-contribuyentes-incumplidos)). Se regresará `null` si el RFC no está incluído en ninguna lista.
+      type: object
+      properties:
+        name:
+          description: El nombre o razón social de la persona física o moral.
+          type: string
+        state:
+          description: El estado de México en que fue registrada la razón social.
+          type: string
+        lists:
+          description: Todas las listas de contribuyentes incumplidos y condonados en que está incluído el RFC.
+          type: array
+          items:
+            $ref: '#/components/schemas/Blacklist69List'
+    Blacklist69List:
+      description: Información sobre una de las listas de contribuyentes incumplidos y condonados en que está incluído el RFC.
+      type: object
+      properties:
+        type:
+          description: El tipo o nombre de la lista en que está incluído el RFC.
+          type: string
+          enum:
+            - CANCELADOS
+            - CONDONADOS_ART_74
+            - CONDONADOS_ART_146B
+            - CONDONADOS_ART_21
+            - CONDONADOS_DECRETO_2015
+            - CONDONADOS_2007_2015
+            - CANCELADOS_2007_2015
+            - RETORNO_INVERSIONES
+            - EXIGIBLES
+            - FIRMES
+            - NO_LOCALIZADOS
+            - SENTENCIAS
+            - ELIMINADOS_NO_LOCALIZADOS
+        firstPublicationDate:
+          description: La primera fecha en que se publicó este RFC en la lista.
+          type: string
+          format: date-time
+        publicationDate:
+          description: La fecha en que se publicó este RFC en la lista ya con el monto actualizado (campo `amount`).
+          type: string
+          format: date-time
+        amount:
+          description: La cantidad de dinero en pesos mexicanos ($MXN) involucrada según la operación listada (condonación, adeudo, retorno de inversión, etc).
+          type: number
+          format: float
+        reason:
+          description: Explicación provista por el SAT de por qué el RFC se encuentra en la lista.
+          type: string
     Blacklist69b:
       description: Provee detalles en caso de que el RFC esté incluído en la lista negra de contribuyentes con operaciones presuntamente inexistentes ([69-B](https://www.sat.gob.mx/consultas/76674/consulta-la-relacion-de-contribuyentes-con-operaciones-presuntamente-inexistentes)). Se regresará `null` si el RFC no está incluído en la lista negra.
       type: object

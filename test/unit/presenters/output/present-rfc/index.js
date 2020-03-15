@@ -19,7 +19,7 @@ const REMOVED_BL69B_PROPERTIES = [
 ];
 
 describe('Presenters | Output | .presentRfc', () => {
-  const {rfc, blacklist69b} = require('./fixtures');
+  const {rfc, blacklists69, blacklist69b} = require('./fixtures');
 
   describe('RFC data', () => {
     const RFC = { ...rfc, blacklist69b: null };
@@ -32,6 +32,7 @@ describe('Presenters | Output | .presentRfc', () => {
         isRegistered: true,
         rfc: VALID_RFC,
         type: 'person',
+        blacklist69: null,
         blacklist69b: null
       });
     });
@@ -43,6 +44,7 @@ describe('Presenters | Output | .presentRfc', () => {
         isRegistered: false,
         rfc: null,
         type: null,
+        blacklist69: null,
         blacklist69b: null,
         validationErrors: [ 'INVALID_DATE' ]
       });
@@ -56,6 +58,49 @@ describe('Presenters | Output | .presentRfc', () => {
           expect(result[property]).to.be.a('undefined');
         });
       });
+    });
+  });
+
+  describe('Blacklist69 data', () => {
+    const RFC = { ...rfc, blacklist69: blacklists69 };
+
+    it('takes the longest company name available', () => {
+      const result = presentRfc(RFC);
+      expect(result.blacklist69.name).to.be.equal('COMPANY NAME, S.A. DE C.V.');
+    });
+
+    it('parses and selects common properties', () => {
+      const result = presentRfc(RFC);
+      const bl69 = result.blacklist69;
+      expect(bl69.name).to.be.equal('COMPANY NAME, S.A. DE C.V.');
+      expect(bl69.state).to.be.equal('JALISCO');
+    });
+
+    it('converts amount from cents to pesos', () => {
+      const result = presentRfc(RFC);
+      const amounts = result.blacklist69.lists.map(l => l.amount);
+      expect(amounts).to.be.eql([10, 50.12]);
+    });
+
+    it('returns an array with all lists where the RFC is present', () => {
+      const result = presentRfc(RFC);
+      const bl69 = result.blacklist69;
+      expect(bl69.lists).to.be.eql([
+        {
+          type: 'CANCELADOS',
+          firstPublicationDate: new Date(100),
+          publicationDate: new Date(200),
+          amount: 10,
+          reason: 'REASON 1'
+        },
+        {
+          type: 'NO_LOCALIZADOS',
+          firstPublicationDate: new Date(500),
+          publicationDate: null,
+          amount: 50.12,
+          reason: 'REASON 2'
+        }
+      ]);
     });
   });
 
