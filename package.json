@@ -32,25 +32,25 @@
     "ui": "bdd"
   },
   "dependencies": {
-    "aws-serverless-express": "^3.3.6",
+    "aws-serverless-express": "^3.4.0",
     "body-parser": "^1.19.0",
-    "common-errors": "^1.0.5",
+    "common-errors": "^1.2.0",
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "joi": "^14.3.1",
-    "lodash": "^4.17.15",
-    "morgan": "^1.9.1",
-    "verifier-core": "git+ssh://git@github.com/manuelmhtr/verifier-core.git",
-    "verifier-database": "git+ssh://git@github.com/manuelmhtr/verifier-database.git"
+    "joi": "^17.4.0",
+    "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
+    "verifier-core": "verifier-mx/core.git",
+    "verifier-database": "verifier-mx/database.git"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^7.1.0",
+    "mocha": "^9.0.2",
     "proxyquire": "^2.1.3",
-    "sinon": "^9.0.0",
-    "supertest": "^4.0.2",
-    "verifier-test-utils": "git+ssh://git@github.com/manuelmhtr/verifier-test-utils.git"
+    "sinon": "^11.1.1",
+    "supertest": "^6.1.3",
+    "verifier-test-utils": "verifier-mx/test-utils.git"
   }
 }

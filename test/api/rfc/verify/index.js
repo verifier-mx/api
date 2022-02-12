@@ -81,7 +81,7 @@ describe('API | POST /rfc/verify', () => {
         const {error} = body;
         expect(error).to.be.an('object');
         expect(error.code).to.be.equal('VALIDATION_ERROR');
-        expect(error.message).to.be.equal('"rfc" is required');
+        expect(error.message).to.be.equal('"body.rfc" is required');
       });
   });
 
