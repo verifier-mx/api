@@ -1,18 +1,20 @@
-FROM node:14
+FROM node:18
 
-WORKDIR /usr/src/app
+# Copy code
+RUN mkdir /app
+WORKDIR /app
+COPY . /app
 
-COPY package.json ./
-COPY yarn.lock ./
-
+# Config Github access
 COPY id_github /root/.ssh/id_rsa
 RUN mkdir -p /root/.ssh
 RUN chmod 700 /root/.ssh/id_rsa
 RUN echo "Host github.com\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
 
-RUN yarn install --production --frozen-lockfile
+# Install the requirements
+RUN yarn install --frozen-lockfile
 
-COPY . ./
+# Start the app
+CMD NODE_ENV=production PORT=8080 yarn start
 
-ENV NODE_ENV=production
-CMD [ "yarn", "start" ]
+EXPOSE 8080
